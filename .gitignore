@@ -1,0 +1,6 @@
+*.pyc
+.ipynb_checkpoints/*
+*.pdf
+kic1255_ascii/*
+kic1255_fits/
+*.ipynb
