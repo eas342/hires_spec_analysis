@@ -94,6 +94,7 @@ class stellModel():
                                     **kwargs)
         self.yModel = np.polyval(polyFit,self.data['Wavelength'])
         self.yDetrend = self.data['SpecificIntensity'] / self.yModel
+        
 
 class measuredArray(stellModel):
     def __init__(self,wavel,intensity,Res=1e5):
@@ -105,6 +106,15 @@ class measuredArray(stellModel):
         self.data['Wavelength'] = wavel
         self.data['SpecificIntensity'] = intensity
         self.yconv = None
+        
+    def chiSquared(self,model,waveRange=[5160,5190]):
+        """ Returns the chi-squared value over an interval
+        Parameters:
+        --------------------
+        waveRange: 2 element list
+            Wavelength region over which to calculate chi-squared
+        """
+        
         
 class subaruSpec():
     def __init__(self,fileName,waveOffset=0.0):
