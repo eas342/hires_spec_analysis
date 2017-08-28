@@ -107,14 +107,34 @@ class measuredArray(stellModel):
         self.data['SpecificIntensity'] = intensity
         self.yconv = None
         
-    def chiSquared(self,model,waveRange=[5160,5190]):
+    def chiSquared(self,model,waveRange=[5160,5190],removePoly=True,doSmooth=True,
+                   normRange=[5176,5179],deltaWInterp = 1.,SNR=100.):
         """ Returns the chi-squared value over an interval
         Parameters:
         --------------------
         waveRange: 2 element list
             Wavelength region over which to calculate chi-squared
+        deltaWInterp: float
+            angstroms of extra tails to interpolate model onto spectrum
+        Returns:
+        --------------------
+        chiSQ: float
+            The chi-squared value
+        chiString: str
+            A string that provides a useful chi^2 for placing in a plot legend
         """
+        modX, modY = model.getSpec(doSmooth=doSmooth,removePoly=removePoly,normRange=normRange,
+                                   showRange=[waveRange[0]- deltaWInterp,waveRange[1] + deltaWInterp])
+        fInterp = interp1d(modX,modY)
         
+        dataX, dataY = self.getSpec(doSmooth=doSmooth,removePoly=removePoly,normRange=normRange,
+                                    showRange=waveRange)
+        
+        modInterp = fInterp(dataX)
+        roughChiSQ = np.sum((dataY - modInterp)**2 * SNR**2)
+        
+        chiString = r' $\chi^2$='+"{:8.0f}".format(roughChiSQ)
+        return roughChiSQ, chiString
         
 class subaruSpec():
     def __init__(self,fileName,waveOffset=0.0):
