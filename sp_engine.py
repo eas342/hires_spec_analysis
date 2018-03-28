@@ -59,7 +59,8 @@ class stellModel():
         
     
     def plot(self,ax=None,offset=0.,customName=None,
-             normRange=[5176,5180],showRange=[5160,5190],doSmooth=False,removePoly=None):
+             normRange=[5176,5180],showRange=[5160,5190],doSmooth=False,removePoly=None,
+             linewidth=1.0,linestyle='-',color=None):
         
         x, y = self.getSpec(normRange=normRange,showRange=showRange,doSmooth=doSmooth,
                            removePoly=removePoly)
@@ -68,7 +69,8 @@ class stellModel():
         else:
             doLabel = customName
         
-        ax.plot(x,y + offset,label=doLabel)
+        ax.plot(x,y + offset,label=doLabel,linewidth=linewidth,linestyle=linestyle,
+                color=color)
         
     def smooth(self,refWavel,outRes):
         """ Smooths at a reference wavelength to given resolution """
