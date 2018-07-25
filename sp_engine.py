@@ -139,11 +139,14 @@ class measuredArray(stellModel):
         return roughChiSQ, chiString
         
 class subaruSpec():
-    def __init__(self,fileName,waveOffset=0.0):
+    def __init__(self,fileName,waveOffset=0.0,rvCorrection=0.0):
         """ Get a subaru spectrum and normalize 
         Parameters
         offset: float
             Put a wavelength offset - not sure why they're off
+        rvCorrection: float
+            Put in a radial velocity correction (for Earth RV correction)
+            Units are km/s
         """
         self.fileName = fileName
         self.baseName = os.path.basename(fileName)
@@ -153,15 +156,18 @@ class subaruSpec():
         self.fileNumber = int(fileNumText)
         if np.mod(self.fileNumber,2) == 0:
             self.ccdSide = 'blue'
+            self.defaultNormRegion = [5160.,5195.]
         else:
             self.ccdSide = 'red'
+            self.defaultNormRegion = [6800.,6900.]
         
         self.waveOffset = waveOffset
         self.wave = self.dat['Wavelength'] + self.waveOffset
-        self.normalize(region=[5160,5195])
+        self.wave = self.wave * (1. + rvCorrection/3e5)
+        self.normalize(region=self.defaultNormRegion)
         
-    def normalize(self,region=[5160,5195]):
-        closepts = (self.wave > 5160.) & (self.wave < 5195.)
+    def normalize(self,region=[5160.,5195.]):
+        closepts = (self.wave > region[0]) & (self.wave < region[1])
         normValue1 = np.median(self.dat['Flux'][closepts])
         self.normFlux = self.dat['Flux'] / normValue1
         
