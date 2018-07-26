@@ -163,6 +163,7 @@ class subaruSpec():
         
         self.waveOffset = waveOffset
         self.wave = self.dat['Wavelength'] + self.waveOffset
+        self.rvCorrection = rvCorrection
         self.wave = self.wave * (1. + rvCorrection/3e5)
         self.normalize(region=self.defaultNormRegion)
         
