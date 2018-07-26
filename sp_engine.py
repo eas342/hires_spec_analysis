@@ -11,7 +11,7 @@ import os
 import es_gen
 
 class stellModel():
-    def __init__(self,fileName,waveOffset=-2.0):
+    def __init__(self,fileName,waveOffset=-1.4):
         """ A class to hold BOSZ stellar models """
         self.fileName = fileName
         HDUList = fits.open(fileName)
