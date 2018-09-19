@@ -11,8 +11,16 @@ import os
 import es_gen
 
 class stellModel():
-    def __init__(self,fileName,waveOffset=-1.4):
-        """ A class to hold BOSZ stellar models """
+    def __init__(self,fileName,rvOffset=-81.2):
+        """ A class to hold BOSZ stellar models 
+        Parameters
+        -----------
+        fileName: str
+            File name to read
+        rvOffset: float
+            RV offset in km/s. Don't know why it's needed
+            but this is the only way I can match Mg lines
+        """
         self.fileName = fileName
         HDUList = fits.open(fileName)
         self.header = HDUList[0].header
@@ -22,8 +30,8 @@ class stellModel():
         
         HDUList.close()
         self.Res = self.header['INSBROAD']
-        self.waveOffset = waveOffset
-        self.data['Wavelength'] = self.data['Wavelength'] + self.waveOffset
+        self.rvOffset = rvOffset
+        self.data['Wavelength'] = self.data['Wavelength'] * (1. + self.rvOffset/3.0e5)
     
     def getPoints(self,wavRange):
         pts = (self.data['Wavelength'] > wavRange[0]) & (self.data['Wavelength'] < wavRange[1])
@@ -164,7 +172,7 @@ class subaruSpec():
         self.waveOffset = waveOffset
         self.wave = self.dat['Wavelength'] + self.waveOffset
         self.rvCorrection = rvCorrection
-        self.wave = self.wave * (1. + rvCorrection/3e5)
+        self.wave = self.wave / (1. + rvCorrection/3e5)
         self.normalize(region=self.defaultNormRegion)
         
     def normalize(self,region=[5160.,5195.]):
