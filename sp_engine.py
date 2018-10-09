@@ -147,7 +147,8 @@ class measuredArray(stellModel):
         return roughChiSQ, chiString
         
 class subaruSpec():
-    def __init__(self,fileName,waveOffset=0.0,rvCorrection=0.0):
+    def __init__(self,fileName,waveOffset=0.0,rvCorrection=0.0,
+                 columnUse='Flux'):
         """ Get a subaru spectrum and normalize 
         Parameters
         offset: float
@@ -155,6 +156,9 @@ class subaruSpec():
         rvCorrection: float
             Put in a radial velocity correction (for Earth RV correction)
             Units are km/s
+        columnUse: str
+            Which column to use? RV (flattened) or Raw Flux?
+            by entering either "Flux" or "Raw Flux"
         """
         self.fileName = fileName
         self.baseName = os.path.basename(fileName)
@@ -173,12 +177,14 @@ class subaruSpec():
         self.wave = self.dat['Wavelength'] + self.waveOffset
         self.rvCorrection = rvCorrection
         self.wave = self.wave / (1. + rvCorrection/3e5)
+        self.columnUse = columnUse
+        
         self.normalize(region=self.defaultNormRegion)
         
     def normalize(self,region=[5160.,5195.]):
         closepts = (self.wave > region[0]) & (self.wave < region[1])
-        normValue1 = np.median(self.dat['Flux'][closepts])
-        self.normFlux = self.dat['Flux'] / normValue1
+        normValue1 = np.median(self.dat[self.columnUse][closepts])
+        self.normFlux = self.dat[self.columnUse] / normValue1
         
     def plot(self,ax=None,offset=0.0):
         ax.plot(self.wave,self.normFlux + offset,label=self.baseName)
