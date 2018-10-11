@@ -5,5 +5,6 @@ kic1255_ascii/*
 kic1255_fits/
 new_k1255_ascii_w_halpha/
 new_k1255_fits_w_halpha/
+new_k1255_fits2_w_halpha/*.fits
 output/
 temporary/
